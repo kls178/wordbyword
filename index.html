@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5f2e9">
+<title>Word by Word — Scripture Memorization</title>
+<style>
+:root{
+  --paper:#f5f2e9;--card:#fffdf8;--ink:#232d26;--muted:#6c756d;
+  --green:#355b46;--green2:#dce8dc;--gold:#d9a84f;--line:#deded2;
+  --rose:#f1e4dd;--shadow:0 10px 30px rgba(34,45,38,.07);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.5}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #d9a84f;outline-offset:3px}
+.shell{max-width:1120px;margin:0 auto;padding:24px 22px 48px}
+header{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:8px 0 24px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:.04em;font-size:13px;text-transform:uppercase}
+.brand-mark{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--green);color:white;font-family:Georgia,serif;font-size:20px}
+.top-note{font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.hero{padding:38px 0 24px;display:grid;grid-template-columns:1.3fr .7fr;gap:28px;align-items:end}
+.kicker{color:var(--green);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:clamp(38px,5.4vw,66px);line-height:.99;letter-spacing:-.04em;margin:12px 0 16px;max-width:650px}
+.hero p{margin:0;max-width:600px;color:var(--muted);font-size:16px}
+.week-stats{background:var(--green);color:#fffdf8;padding:20px;border-radius:18px;min-height:142px;display:flex;flex-direction:column;justify-content:space-between}
+.stats-top{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#dce8dc}
+.stats-number{font-family:Georgia,serif;font-size:34px;line-height:1.1}
+.progress-track{height:5px;border-radius:99px;background:rgba(255,255,255,.22);overflow:hidden;margin-top:12px}
+.progress-fill{height:100%;width:0;background:var(--gold);transition:width .25s}
+main{display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.setup{padding:22px;position:sticky;top:16px}
+.section-label{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
+label{display:block;font-size:13px;font-weight:700;margin:15px 0 7px}
+input,textarea{width:100%;border:1px solid #d4d8ce;background:#fffefa;color:var(--ink);border-radius:10px;padding:11px 12px}
+textarea{resize:vertical;min-height:122px}
+.hint{font-size:12px;color:var(--muted);margin:8px 0 0}
+.btn{border:0;border-radius:10px;padding:11px 14px;font-weight:750;transition:transform .12s,background .12s}
+.btn:active{transform:scale(.985)}
+.btn-primary{background:var(--green);color:white;width:100%;margin-top:16px}
+.btn-primary:hover{background:#294b39}
+.btn-soft{background:var(--green2);color:var(--green)}
+.btn-line{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn-small{padding:8px 11px;font-size:12px}
+.setup-actions{display:flex;gap:8px;margin-top:10px}
+.setup-actions .btn{flex:1}
+.note{border-top:1px solid var(--line);margin-top:20px;padding-top:15px;color:var(--muted);font-size:12px}
+.practice{overflow:hidden}
+.practice-head{padding:23px 25px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:18px;align-items:start}
+.practice-head h2{font-family:Georgia,serif;font-weight:500;font-size:29px;line-height:1.1;margin:5px 0 6px}
+.reference{font-size:13px;color:var(--muted)}
+.day-pill{white-space:nowrap;border-radius:99px;background:var(--rose);padding:7px 11px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.day-nav{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;padding:14px 22px;background:#faf8f1;border-bottom:1px solid var(--line)}
+.day-tab{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:11px;padding:10px 4px;text-align:center}
+.day-tab .day-num{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+.day-tab .day-name{display:block;font-weight:800;font-size:13px;margin-top:3px}
+.day-tab.active{background:var(--green);border-color:var(--green);color:white}
+.day-tab.done{background:var(--green2);border-color:#c4d5c4;color:var(--green)}
+.day-tab.done.active{background:var(--green);color:white}
+.activity{padding:25px}
+.activity-top{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.activity-icon{height:38px;width:38px;border-radius:12px;background:var(--green2);color:var(--green);display:grid;place-items:center;font-size:18px}
+.activity h3{font-family:Georgia,serif;font-weight:500;font-size:25px;margin:0}
+.activity-intro{color:var(--muted);margin:8px 0 20px;max-width:700px}
+.instructions{padding:16px 18px;background:#f6f4ec;border-radius:12px;margin:16px 0}
+.instructions ol,.instructions ul{margin:8px 0 0;padding-left:20px}
+.instructions li{padding:3px 0}
+.verse-card{border:1px solid var(--line);border-radius:14px;padding:20px;background:#fffefa;margin:18px 0}
+.verse-text{font-family:Georgia,"Times New Roman",serif;font-size:clamp(21px,2.4vw,29px);line-height:1.55;letter-spacing:-.01em}
+.verse-text .chunk{background:#e4ecdf;border-radius:5px;padding:0 3px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.verse-ref{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:12px;font-weight:700}
+.action-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+.action-row .btn{width:auto}
+.small-label{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+.first-letters{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:20px;letter-spacing:.09em;line-height:1.8;overflow-wrap:anywhere;background:#f6f4ec;padding:16px;border-radius:12px}
+.cloze{font-family:Georgia,serif;font-size:24px;line-height:1.9;overflow-wrap:anywhere}
+.word{display:inline-block;margin:0 2px 3px 0}
+.word button{border:0;border-bottom:2px solid #b9c7b6;background:#e4ecdf;color:var(--green);border-radius:4px;padding:0 5px;min-width:22px}
+.word button.hidden-word{background:#e8e5dc;color:transparent;border-bottom-color:#c9c6ba;min-width:46px}
+textarea.answer{min-height:145px;font-family:Georgia,serif;font-size:18px;line-height:1.55}
+.feedback{padding:12px 14px;border-radius:10px;background:var(--green2);color:var(--green);font-size:13px;margin-top:12px;display:none}
+.feedback.show{display:block}
+.complete-row{border-top:1px solid var(--line);padding:18px 25px;background:#faf8f1;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.complete-copy{font-size:13px;color:var(--muted)}
+.complete-copy strong{display:block;color:var(--ink);font-size:14px}
+.complete-button{white-space:nowrap}
+footer{padding:22px 0 0;display:flex;justify-content:space-between;gap:16px;color:var(--muted);font-size:11px}
+@media(max-width:800px){.hero{grid-template-columns:1fr;gap:18px}.week-stats{min-height:115px}main{grid-template-columns:1fr}.setup{position:static}.practice-head{padding:20px}.activity{padding:20px}.day-nav{padding:12px}.day-tab{padding:9px 2px}.day-tab .day-name{font-size:11px}.complete-row{padding:16px 20px}}
+@media(max-width:430px){.shell{padding:14px 12px 30px}.top-note{display:none}.hero{padding-top:28px}.practice-head h2{font-size:25px}.day-pill{font-size:9px}.activity h3{font-size:22px}.verse-card{padding:15px}.complete-row{align-items:flex-start;flex-direction:column}.complete-button{width:100%}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header>
+  <div class="brand"><div class="brand-mark">W</div><span>Word by Word</span></div>
+  <div class="top-note">A five-day Scripture practice</div>
+</header>
+<section class="hero">
+  <div>
+    <div class="kicker">One passage · Five days · A little at a time</div>
+    <h1>Let the words<br>take root.</h1>
+    <p>A guided weekly rhythm for learning Scripture by heart. Read, notice, retrieve, rebuild, and recite—one short practice at a time.</p>
+  </div>
+  <div class="week-stats">
+    <div class="stats-top">Your progress this week</div>
+    <div><div class="stats-number"><span id="doneCount">0</span><span style="font-size:19px;color:#dce8dc"> / 5 days</span></div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div></div>
+  </div>
+</section>
+<main>
+  <aside class="panel setup">
+    <p class="section-label">This week's passage</p>
+    <label for="refInput">Bible reference</label>
+    <input id="refInput" value="Psalm 23:1" placeholder="e.g. Philippians 4:6–7">
+    <label for="textInput">Verse text</label>
+    <textarea id="textInput" placeholder="Paste the verse or passage you want to memorize."></textarea>
+    <p class="hint">Use any translation you prefer. For a longer passage, start with 1–3 verses.</p>
+    <button class="btn btn-primary" id="startBtn">Set this week's passage</button>
+    <div class="setup-actions">
+      <button class="btn btn-soft btn-small" id="shareBtn">Share plan</button>
+      <button class="btn btn-line btn-small" id="resetBtn">Reset week</button>
+    </div>
+    <div class="note">Your progress is saved in this browser. A shared plan link carries the passage, not another person's progress. To share with a group, host this file online first.</div>
+  </aside>
+  <section class="panel practice">
+    <div class="practice-head">
+      <div><div class="kicker" id="dayKicker">Day 1 of 5</div><h2 id="dayHeading">Read & Notice</h2><div class="reference" id="passageLabel">Psalm 23:1 · World English Bible</div></div>
+      <div class="day-pill" id="timePill">5–8 minutes</div>
+    </div>
+    <nav class="day-nav" aria-label="Choose practice day" id="dayNav">
+      <button class="day-tab active" data-day="0"><span class="day-num">Day 01</span><span class="day-name">Notice</span></button>
+      <button class="day-tab" data-day="1"><span class="day-num">Day 02</span><span class="day-name">Recall</span></button>
+      <button class="day-tab" data-day="2"><span class="day-num">Day 03</span><span class="day-name">Uncover</span></button>
+      <button class="day-tab" data-day="3"><span class="day-num">Day 04</span><span class="day-name">Rebuild</span></button>
+      <button class="day-tab" data-day="4"><span class="day-num">Day 05</span><span class="day-name">Recite</span></button>
+    </nav>
+    <div class="activity" id="activity"></div>
+    <div class="complete-row">
+      <div class="complete-copy"><strong id="completionTitle">Finish today's practice</strong><span id="completionText">Mark the day complete when you've tried the exercise.</span></div>
+      <button class="btn btn-primary complete-button" id="completeBtn">Mark day complete</button>
+    </div>
+  </section>
+</main>
+<footer><span>Word by Word · Scripture memorization</span><span>Small, repeated effort beats one long cram session.</span></footer>
+</div>
+<script>
+(function(){
+const DEFAULT_REF = "Psalm 23:1";
+const DEFAULT_TEXT = "Yahweh is my shepherd: I shall lack nothing.";
+const STORAGE_KEY = "wordByWordApp_v1";
+const days = [
+ {name:"Read & Notice",short:"Notice",time:"5–8 minutes",icon:"◉",intro:"Begin by getting familiar with the sound, shape, and meaning of the passage.",steps:["Read the verse slowly three times, aloud if possible.","Notice one word or phrase that feels important. What does it mean in context?","Divide the passage into natural phrase-sized chunks. Read each chunk, then the whole verse again.","Close by saying the reference aloud before and after the verse."]},
+ {name:"Recall in Chunks",short:"Recall",time:"5–8 minutes",icon:"↗",intro:"Move from recognition to retrieval. Try to remember the words before you look.",steps:["Read the passage once, then cover it.","Recall the first phrase. Check it, correct it, and try again.","Repeat with each phrase, then connect the phrases together.","Use the first-letter cues below only after you have made a genuine attempt."]},
+ {name:"Uncover Less",short:"Uncover",time:"5–8 minutes",icon:"▤",intro:"Strengthen recall by removing more of the written support each time.",steps:["Read the complete passage once.","Tap words below to hide them. Start by hiding a few familiar words.","Say the full passage from memory, including the hidden words.","Reveal and check. Hide more words for another round."]},
+ {name:"Rebuild from Memory",short:"Rebuild",time:"5–8 minutes",icon:"⌁",intro:"Practice producing the passage without seeing the original wording.",steps:["Look away from the verse and type or write it from memory.","Compare your version with the original. Notice omissions and word order.","Try again, focusing on the part you missed rather than starting over in frustration.","Finish by saying the passage aloud once, with the reference."]},
+ {name:"Recite & Carry",short:"Recite",time:"5–10 minutes",icon:"✳",intro:"Test your recall, then connect the passage to a real moment in your week.",steps:["Recite the passage aloud without looking. Include the reference if you can.","Type your best attempt below, then compare it with the original.","Choose one phrase to carry with you today. When might you remember it?","Schedule a quick review in two days and again next week. Spaced review helps it last."]}
+];
+let state = {ref:DEFAULT_REF,text:DEFAULT_TEXT,day:0,done:[false,false,false,false,false],hidden:0,showCues:false,answer:"",feedback:""};
+let currentKey = "";
+const $ = id => document.getElementById(id);
+function normalize(s){return (s||"").toLowerCase().replace(/[“”‘’]/g,"'").replace(/[^\p{L}\p{N}'\s]/gu," ").replace(/\s+/g," ").trim();}
+function words(){return state.text.trim().split(/\s+/).filter(Boolean);}
+function chunks(){
+ const s=state.text.trim();
+ if(!s)return [];
+ // Prefer sentence/punctuation boundaries, then split longer passages into short groups.
+ let pieces=s.match(/[^,;:.!?]+[,;:.!?]?/g)||[s];
+ pieces=pieces.map(x=>x.trim()).filter(Boolean);
+ if(pieces.length===1 && words().length>10){
+   const w=words(), out=[];
+   for(let i=0;i<w.length;i+=5)out.push(w.slice(i,i+5).join(" "));
+   return out;
+ }
+ return pieces;
+}
+function load(){
+ const params=new URLSearchParams(location.search);
+ const urlRef=params.get("ref"), urlText=params.get("text");
+ if(urlText){state.ref=urlRef||"Shared passage";state.text=urlText;}
+ else {
+  try{
+   const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");
+   if(saved){state.ref=saved.ref||DEFAULT_REF;state.text=saved.text||DEFAULT_TEXT;state.day=Number.isInteger(saved.day)?saved.day:0;state.done=Array.isArray(saved.done)&&saved.done.length===5?saved.done:[false,false,false,false,false];}
+  }catch(e){}
+ }
+ currentKey=keyFor(state.ref,state.text);
+ const progress=readProgress(currentKey);
+ if(progress){state.done=progress.done;state.day=progress.day??state.day;}
+ $("refInput").value=state.ref;
+ $("textInput").value=state.text;
+}
+function keyFor(ref,text){return "passage:"+ref.trim().toLowerCase()+"|"+text.trim().toLowerCase();}
+function readProgress(key){try{return JSON.parse(localStorage.getItem(STORAGE_KEY+":"+key)||"null");}catch(e){return null;}}
+function save(){
+ try{
+  localStorage.setItem(STORAGE_KEY,JSON.stringify({ref:state.ref,text:state.text,day:state.day,done:state.done}));
+  localStorage.setItem(STORAGE_KEY+":"+keyFor(state.ref,state.text),JSON.stringify({day:state.day,done:state.done}));
+ }catch(e){}
+}
+function escapeHTML(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function setPassage(){
+ const ref=$("refInput").value.trim()||"My passage";
+ const text=$("textInput").value.trim();
+ if(!text){$("textInput").focus();$("textInput").placeholder="Paste your passage here before starting.";return;}
+ state.ref=ref;state.text=text;state.day=0;state.hidden=0;state.showCues=false;state.answer="";state.feedback="";
+ currentKey=keyFor(ref,text);
+ const p=readProgress(currentKey);state.done=p?.done||[false,false,false,false,false];
+ save();render();
+}
+function render(){
+ const d=days[state.day];
+ $("dayKicker").textContent="Day "+(state.day+1)+" of 5";
+ $("dayHeading").textContent=d.name;
+ $("passageLabel").textContent=state.ref;
+ $("timePill").textContent=d.time;
+ $("doneCount").textContent=state.done.filter(Boolean).length;
+ $("progressFill").style.width=(state.done.filter(Boolean).length/5*100)+"%";
+ document.querySelectorAll(".day-tab").forEach((b,i)=>{b.classList.toggle("active",i===state.day);b.classList.toggle("done",state.done[i]);b.setAttribute("aria-current",i===state.day?"step":"false");});
+ $("completionTitle").textContent=state.done[state.day]?"Today's practice is complete":"Finish today's practice";
+ $("completionText").textContent=state.done[state.day]?"You can revisit this exercise any time.":"Mark the day complete when you've tried the exercise.";
+ $("completeBtn").textContent=state.done[state.day]?"Completed ✓":"Mark day complete";
+ $("completeBtn").className="btn "+(state.done[state.day]?"btn-soft":"btn-primary")+" complete-button";
+ const area=$("activity");
+ area.innerHTML=`<div class="activity-top"><div class="activity-icon">${d.icon}</div><div><div class="section-label" style="margin:0">Today's practice</div><h3>${d.name}</h3></div></div>
+ <p class="activity-intro">${d.intro}</p>
+ <div class="instructions"><strong>Try this</strong><ol>${d.steps.map(s=>`<li>${s}</li>`).join("")}</ol></div>
+ ${renderExercise(state.day)}
+ <div class="action-row"><button class="btn btn-line" id="revealBtn">${state.day===2?"Reveal all words":"Show full passage"}</button><button class="btn btn-soft" id="cueBtn">${state.showCues?"Hide first-letter cues":"Show first-letter cues"}</button></div>
+ <div class="feedback ${state.feedback?"show":""}" id="feedback">${escapeHTML(state.feedback)}</div>`;
+ $("revealBtn").addEventListener("click",()=>{state.hidden=0;state.showCues=false;state.feedback="";render();});
+ $("cueBtn").addEventListener("click",()=>{state.showCues=!state.showCues;render();});
+ if(state.day===2)document.querySelectorAll("[data-word]").forEach(b=>b.addEventListener("click",()=>{const i=Number(b.dataset.word);state.hiddenWords=state.hiddenWords||[];if(state.hiddenWords.includes(i))state.hiddenWords=state.hiddenWords.filter(x=>x!==i);else state.hiddenWords.push(i);render();}));
+ const check=$("checkAnswer");if(check)check.addEventListener("click",checkTypedAnswer);
+ const reset=$("clearAnswer");if(reset)reset.addEventListener("click",()=>{state.answer="";state.feedback="";render();});
+}
+function renderExercise(day){
+ const passage=escapeHTML(state.text);
+ const ref=escapeHTML(state.ref);
+ let html="";
+ if(day===0){
+  const parts=chunks();
+  html+=`<div class="verse-card"><div class="verse-text">${parts.map(p=>`<span class="chunk">${escapeHTML(p)}</span> `).join("")}</div><div class="verse-ref">${ref}</div></div><div class="small-label">Notice the shape</div><p>How many chunks can you hear? Which word carries the most meaning? Read the passage once with the chunks, then once without pausing between them.</p>`;
+ }else if(day===1){
+  const cue=words().map(w=>w.replace(/[^\p{L}\p{N}]/gu,"").slice(0,1)||"•").join(" · ");
+  html+=`<div class="verse-card"><div class="verse-text">${passage}</div><div class="verse-ref">${ref}</div></div>`;
+  if(state.showCues)html+=`<div class="small-label">First-letter cues</div><div class="first-letters">${escapeHTML(cue)}</div>`;
+  html+=`<div class="small-label">Recall checkpoint</div><p>Cover the verse above. Say it aloud, then uncover it and check the words you missed.</p>`;
+ }else if(day===2){
+  const ws=words();const hidden=state.hiddenWords||[];
+  html+=`<div class="verse-card"><div class="cloze">${ws.map((w,i)=>`<span class="word"><button data-word="${i}" class="${hidden.includes(i)?"hidden-word":""}" aria-label="${hidden.includes(i)?"Hidden word":"Hide word"}">${hidden.includes(i)?"_____":escapeHTML(w)}</button></span>`).join(" ")}</div><div class="verse-ref">${ref}</div></div><p class="hint">Tap individual words to hide or reveal them. Try hiding a few more each round.</p><div class="action-row"><button class="btn btn-soft" id="hideSomeBtn">Hide more words</button><button class="btn btn-line" id="showAllWordsBtn">Show all words</button></div>`;
+ }else if(day===3){
+  html+=`<div class="small-label">Your recall attempt</div><textarea class="answer" id="answerInput" placeholder="Type the passage from memory...">${escapeHTML(state.answer||"")}</textarea><div class="action-row"><button class="btn btn-primary" id="checkAnswer">Compare with original</button><button class="btn btn-line" id="clearAnswer">Try again</button></div><div class="verse-card"><div class="small-label">Original passage</div><div class="verse-text">${passage}</div><div class="verse-ref">${ref}</div></div>`;
+ }else{
+  html+=`<div class="small-label">Final recall</div><textarea class="answer" id="answerInput" placeholder="Write or type the passage from memory...">${escapeHTML(state.answer||"")}</textarea><div class="action-row"><button class="btn btn-primary" id="checkAnswer">Check my recall</button><button class="btn btn-line" id="clearAnswer">Try again</button></div><div class="verse-card"><div class="small-label">Original passage · Reveal when ready</div><div id="originalPassage" style="display:none"><div class="verse-text">${passage}</div><div class="verse-ref">${ref}</div></div><button class="btn btn-soft btn-small" id="revealOriginal">Reveal original</button></div><div class="instructions"><strong>Take it with you</strong><p style="margin:8px 0 0">Complete this sentence: “This passage matters to me this week because…” Consider setting a reminder to review it in two days.</p><textarea id="reflection" placeholder="A thought to carry with you (optional)" style="min-height:78px;margin-top:10px"></textarea></div>`;
+ }
+ return html;
+}
+function checkTypedAnswer(){
+ const inp=$("answerInput");if(!inp)return;
+ state.answer=inp.value;
+ const original=normalize(state.text), typed=normalize(state.answer);
+ if(!typed){state.feedback="Try a first recall attempt before checking. Even an imperfect attempt strengthens memory.";render();return;}
+ const a=original.split(" "),b=typed.split(" ");
+ let hits=0;for(let i=0;i<Math.min(a.length,b.length);i++)if(a[i]===b[i])hits++;
+ const pct=Math.round(hits/Math.max(a.length,b.length)*100);
+ state.feedback=`You matched about ${pct}% of the words in the right positions. ${pct>=90?"Strong recall—say it aloud once more without looking.":pct>=65?"Good progress. Review the words or phrases you missed, then try again.":"Use the original to find the first point where your wording changes, then practice that chunk."}`;
+ render();
+}
+$("dayNav").addEventListener("click",e=>{const b=e.target.closest("[data-day]");if(!b)return;state.day=Number(b.dataset.day);state.feedback="";save();render();});
+$("completeBtn").addEventListener("click",()=>{state.done[state.day]=!state.done[state.day];if(state.done[state.day]&&state.day<4&&!state.done[state.day+1])state.day=Math.min(state.day+1,4);save();render();});
+$("startBtn").addEventListener("click",setPassage);
+$("resetBtn").addEventListener("click",()=>{if(!confirm("Reset all five days for this passage?"))return;state.done=[false,false,false,false,false];state.day=0;state.hiddenWords=[];state.answer="";state.feedback="";save();render();});
+$("shareBtn").addEventListener("click",async()=>{
+ const url=new URL(location.href);
+ url.searchParams.set("ref",state.ref);url.searchParams.set("text",state.text);
+ if(location.protocol==="file:"){
+  const msg="This app is currently opened as a local file. To create a shareable plan link, upload the HTML file to a static host (such as GitHub Pages or Netlify), then use Share plan.";
+  if(navigator.clipboard&&navigator.clipboard.writeText){try{await navigator.clipboard.writeText(state.ref+"\n"+state.text);alert(msg+"\n\nThe reference and verse text have been copied instead.");return;}catch(e){}}
+  alert(msg);return;
+ }
+ try{
+  if(navigator.share){await navigator.share({title:"My Scripture memorization plan",text:"Join me in memorizing "+state.ref+" over five days.",url:url.toString()});}
+  else if(navigator.clipboard){await navigator.clipboard.writeText(url.toString());alert("Shareable plan link copied.");}
+  else prompt("Copy this plan link:",url.toString());
+ }catch(e){}
+});
+$("activity").addEventListener("click",e=>{
+ if(e.target.id==="hideSomeBtn"){const ws=words();state.hiddenWords=state.hiddenWords||[];const target=Math.min(ws.length,Math.max(3,Math.ceil(ws.length*.25)));for(let i=0;i<ws.length&&state.hiddenWords.length<target;i++){if(!state.hiddenWords.includes(i))state.hiddenWords.push(i);}render();}
+ if(e.target.id==="showAllWordsBtn"){state.hiddenWords=[];render();}
+ if(e.target.id==="revealOriginal"){const el=$("originalPassage");if(el)el.style.display="block";e.target.style.display="none";}
+});
+load();
+if(!$("textInput").value)$("textInput").value=DEFAULT_TEXT;
+render();
+})();
+</script>
+</body>
+</html>
